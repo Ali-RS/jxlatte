@@ -59,7 +59,7 @@ public class JXLImageReader extends ImageReader {
     public BufferedImage read(int imageIndex, ImageReadParam param) throws IOException {
         var decoder = new JXLDecoder(new ByteArrayInputStream(bytes), new JXLOptions(false));
         this.image = decoder.decode();
-        BufferedImage bufferedImage = new BufferedImage(getWidth(0), getHeight(0), BufferedImage.TYPE_INT_ARGB);
+        var bufferedImage = new BufferedImage(getWidth(0), getHeight(0), BufferedImage.TYPE_INT_ARGB);
         var buffer = image.getBuffer();
 
         switch (image.getColorEncoding()) {
