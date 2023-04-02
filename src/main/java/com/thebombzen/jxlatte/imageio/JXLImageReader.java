@@ -59,7 +59,7 @@ public class JXLImageReader extends ImageReader {
     public BufferedImage read(int imageIndex, ImageReadParam param) throws IOException {
         var decoder = new JXLDecoder(new ByteArrayInputStream(bytes), new JXLOptions(false));
         this.image = decoder.decode();
-        var bufferedImage = new BufferedImage(getWidth(0), getHeight(0), BufferedImage.TYPE_INT_RGB);
+        BufferedImage bufferedImage = new BufferedImage(getWidth(0), getHeight(0), BufferedImage.TYPE_INT_ARGB);
         var buffer = image.getBuffer();
 
         switch (image.getColorEncoding()) {
@@ -76,7 +76,7 @@ public class JXLImageReader extends ImageReader {
                                    ((gray & 0xFF) << 16) |
                                    ((gray & 0xFF) << 8) |
                                    ((gray & 0xFF));
-                        bufferedImage.getRaster().setDataElements(x, y, 1, 1, new int[]{argb});
+                        bufferedImage.setRGB(x, y, argb);
                     }
                 }
 
@@ -97,13 +97,13 @@ public class JXLImageReader extends ImageReader {
                         int r = hdrToRgb(rYBuffer[x]);
                         int g = hdrToRgb(gYBuffer[x]);
                         int b = hdrToRgb(bYBuffer[x]);
-                        int a = image.getAlphaIndex() == -1 ? 0xFF : (int) ((image.getBuffer()[3][y][x]) * 255);
+                        int a = image.hasAlpha() ? hdrToRgb(buffer[3][y][x]) : 0xFF;
 
                         var argb = ((a & 0xFF) << 24) |
                                    ((r & 0xFF) << 16) |
                                    ((g & 0xFF) << 8)  |
                                    ((b & 0xFF));
-                        bufferedImage.getRaster().setDataElements(x, y, 1, 1, new int[]{argb});
+                        bufferedImage.setRGB(x, y, argb);
                     }
                 }
 
